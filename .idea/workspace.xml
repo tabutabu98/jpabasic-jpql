@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8fa2aca-c938-45e0-82d2-fd3d576233ee" name="Changes" comment="feat 프로젝트 생성 @syc">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/jpql/Address.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/jpql/JpaMain.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/jpql/Member.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/jpql/Order.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/jpql/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/jpql/Team.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="a8fa2aca-c938-45e0-82d2-fd3d576233ee" name="Changes" comment="feat 기본 문법과 쿼리 API @syc">
+      <change afterPath="$PROJECT_DIR$/src/main/java/jpql/MemberDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/jpql/JpaMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/jpql/JpaMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +90,8 @@
       <option name="presentableId" value="Default" />
       <updated>1646914591408</updated>
       <workItem from="1646914592574" duration="326000" />
-      <workItem from="1646915081182" duration="1731000" />
+      <workItem from="1646915081182" duration="2089000" />
+      <workItem from="1646968372731" duration="1258000" />
     </task>
     <task id="LOCAL-00001" summary="feat 프로젝트 생성 @syc">
       <created>1646915101941</created>
@@ -105,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646915101941</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="feat 기본 문법과 쿼리 API @syc">
+      <created>1646917176681</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1646917176681</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,6 +126,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="feat 프로젝트 생성 @syc" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat 프로젝트 생성 @syc" />
+    <MESSAGE value="feat 기본 문법과 쿼리 API @syc" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat 기본 문법과 쿼리 API @syc" />
   </component>
 </project>

@@ -13,50 +13,83 @@ public class JpaMain {
         tx.begin();
 
         try {
-            // 기본 문법과 쿼리 API
+            // 프로젝션(SELECT)
             Member member = new Member();
             member.setUsername("member1");
             member.setAge(10);
             em.persist(member);
 
-//            // 반환 타입
-//            TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class);
-//            TypedQuery<String> query2 = em.createQuery("select m.username from Member m", String.class);
-//            // 반환 타입이 명확하지 않을 때
-//            Query query3 = em.createQuery("select m.username, m.age from Member m");
+            em.flush();
+            em.clear();
 
+            // 엔티티 프로젝션 1
+//            List<Member> result = em.createQuery("select m from Member m", Member.class)
+//                    .getResultList();
+//
+//            Member findMember = result.get(0);
+//            findMember.setAge(20);
 
-            // 리스트를 저장할 때
-//            TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class);
-//            List<Member> resultList = query.getResultList();
-//            for (Member member1 : resultList) {
-//                System.out.println("member1 = " + member1);
-//            }
+            // 엔티티 프로젝션 2
+            /**
+             * JPQL은 최대한 NativeSQL과 비슷하게 작성
+             * JPQL을 한눈에 봤을 때 join을 하는지 명확히 알 수 없음
+             */
+//            List<Team> result = em.createQuery("select m.team from Member m", Team.class)
+//                    .getResultList();
 
             /**
-             * 값 하나를 저장할 때
-             * 결과가 정확히 하나가 나와야한다.
-             * 결과가 없으면 예외가 터진다!
-             * 결과가 둘 이상이여도 예외가 터진다!
+             * NativeSQL과 비슷한 JPQL 작성 방법
+             * JPQL을 한눈에 봤을 때 join을 하는지 명확히 알 수 있음
              */
-//            TypedQuery<Member> query = em.createQuery("select m from Member m where m.id = 10", Member.class);
-//            Member resu = query.getSingleResult();
-//            // Spring Data JPA -> 결과가 없으면 Null 또는 Optional을 반환한다
-//            System.out.println("resu = " + resu);
+//            List<Team> result = em.createQuery("select t from Member m join m.team t", Team.class)
+//                    .getResultList();
 
+            // 임베디드 타입 프로젝션
             /**
-             * 파라미터 바인딩 - 이름기준
-             * 위치기반은 사용하지 않는것을 권장
+             * 한계가 있다.
+             * 임베디드 타입은 어디에 소속되어 있기 때문에 소속된 엔티티로부터 시작해야한다.
              */
-//            TypedQuery<Member> query = em.createQuery("select m from Member m where m.username = :username", Member.class);
-//            query.setParameter("username", "member1");
-//            Member singleResult = query.getSingleResult();
-//            System.out.println("singleResult = " + singleResult.getUsername());
-            // 또는
-            Member result = em.createQuery("select m from Member m where m.username = :username", Member.class)
-                    .setParameter("username", "member1")
-                    .getSingleResult();
-            System.out.println("singleResult = " + result.getUsername());
+//            em.createQuery("select o.address from Order o", Address.class)
+//                    .getResultList();
+
+            // 스칼라 타입 프로젝션
+            /**
+             * NativeSQL과 가장 비슷한 방법
+             */
+//            em.createQuery("select m.username, m.age from Member m")
+//                    .getResultList();
+
+            // 프로젝션 - 여러 값 조회, Object[] 타입으로 조회 1
+//            List resultList = em.createQuery("select m.username, m.age from Member m")
+//                    .getResultList();
+//
+//            Object o = resultList.get(0);
+//            Object[] result = (Object[]) o;
+//            System.out.println("username = " + result[0]);
+//            System.out.println("age = " + result[1]);
+
+            // 프로젝션 - 여러 값 조회, Object[] 타입으로 조회 2
+            /**
+             * 추천하지는 않음
+             */
+//            List<Object[]> resultList = em.createQuery("select m.username, m.age from Member m")
+//                    .getResultList();
+//            Object[] result = resultList.get(0);
+//            System.out.println("username = " + result[0]);
+//            System.out.println("age = " + result[1]);
+
+            // 프로젝션 - 여러 값 조회, new 명령어로 조회
+            /**
+             * 제일 깔끔한 방법
+             * 다만 패키지가 길어지면 쿼리가 길어진다.
+             * queryDSL을 사용하게 되면 해결될 문제
+             */
+            List<MemberDTO> result = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
+                    .getResultList();
+            MemberDTO memberDTO = result.get(0);
+            System.out.println("memberDTO = " + memberDTO.getUsername());
+            System.out.println("memberDTO = " + memberDTO.getAge());
+
 
             tx.commit();
         } catch (Exception e) {
