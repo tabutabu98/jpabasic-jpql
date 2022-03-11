@@ -12,8 +12,10 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
+        /**
+         * 서브 쿼리
+         */
         try {
-            // 조인
             Team team = new Team();
             team.setName("teamA");
             em.persist(team);
@@ -29,25 +31,13 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-//            String query = "select m from Member m, Team t where m.username = t.name";
-//            List<Member> result = em.createQuery(query, Member.class)
-//                    .getResultList();
-//
-//            System.out.println("result = " + result.size());
-
+            String query = "select (select avg(m1.age) from Member m1) as avgAge from Member m join Team t on m.username = t.name";
             /**
-             * 조인 대상 필터링
+             * FROM 절의 서브쿼리는 불가
+             * 조인으로 풀어서 해결해야함
              */
-//            String query = "select m from Member m left join m.team t on t.name = 'teamA'";
-//            List<Member> result = em.createQuery(query, Member.class)
-//                    .getResultList();
-//
-//            System.out.println("result = " + result.size());
-
-            /**
-             * 연관관계 없는 엔티티 외부 조인
-             */
-            String query = "select m from Member m join Team t on m.username = t.name";
+//            String query = "select m from " +
+//                    "(select m.age, m.username from Member m) as mm";
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
 
