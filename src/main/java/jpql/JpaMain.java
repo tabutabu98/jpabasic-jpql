@@ -1,7 +1,6 @@
 package jpql;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.List;
 
 public class JpaMain {
@@ -14,7 +13,7 @@ public class JpaMain {
         tx.begin();
 
         /**
-         * 페치 조인 2 - 한계
+         * 엔티티 직접 사용
          */
         try {
             Team teamA = new Team();
@@ -44,44 +43,38 @@ public class JpaMain {
             em.clear();
 
             /**
-             * 페치 조인의 특징과 한계
-             * 페치 조인 대상에는 별칭을 주면 안됨(정합성 이슈로 인하여)
-             * 둘 이상의 컬렉션은 페치 조인 할 수 없다.
+             * 엔티티 직접 사용 - 기본 키 값 1
              */
-//            String query = "select t from Team t join fetch t.members";
+//            String query = "select m from Member m where m = :member";
 //
-//            List<Team> result = em.createQuery(query, Team.class)
-//                    .setFirstResult(0)
-//                    .setMaxResults(1)
-//                    .getResultList();
+//            Member findMember = em.createQuery(query, Member.class)
+//                    .setParameter("member", member1)
+//                    .getSingleResult();
 //
-//            System.out.println("result = " + result.size());
-//
-//            for (Team team : result) {
-//                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
-//                for (Member member : team.getMembers()) {
-//                    System.out.println("-> member = " + member);
-//                }
-//            }
+//            System.out.println("findMember = " + findMember);
 
             /**
-             * 페치 조인의 특징과 한계
-             * members에 BatchSize(100) 혹은 글로벌로 배치 사이즈를 지정
+             * 엔티티 직접 사용 - 기본 키 값 2
              */
-            String query = "select t from Team t";
+//            String query = "select m from Member m where m.id = :memberId";
+//
+//            Member findMember = em.createQuery(query, Member.class)
+//                    .setParameter("memberId", member1.getId())
+//                    .getSingleResult();
+//
+//            System.out.println("findMember = " + findMember);
 
-            List<Team> result = em.createQuery(query, Team.class)
-                    .setFirstResult(0)
-                    .setMaxResults(2)
+            /**
+             * 엔티티 직접 사용 - 외래 키 값
+             */
+            String query = "select m from Member m where m.team = :team";
+
+            List<Member> members = em.createQuery(query, Member.class)
+                    .setParameter("team", teamA)
                     .getResultList();
 
-            System.out.println("result = " + result.size());
-
-            for (Team team : result) {
-                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
-                for (Member member : team.getMembers()) {
-                    System.out.println("-> member = " + member);
-                }
+            for (Member member : members) {
+                System.out.println("member = " + member);
             }
 
             tx.commit();
