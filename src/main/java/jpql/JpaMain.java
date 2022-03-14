@@ -13,7 +13,8 @@ public class JpaMain {
         tx.begin();
 
         /**
-         * 엔티티 직접 사용
+         * Named 쿼리
+         * 애플리케이션 로딩 시점에 쿼리를 검증(중요)
          */
         try {
             Team teamA = new Team();
@@ -43,37 +44,13 @@ public class JpaMain {
             em.clear();
 
             /**
-             * 엔티티 직접 사용 - 기본 키 값 1
+             * Named 쿼리 - 어노테이션
              */
-//            String query = "select m from Member m where m = :member";
-//
-//            Member findMember = em.createQuery(query, Member.class)
-//                    .setParameter("member", member1)
-//                    .getSingleResult();
-//
-//            System.out.println("findMember = " + findMember);
-
-            /**
-             * 엔티티 직접 사용 - 기본 키 값 2
-             */
-//            String query = "select m from Member m where m.id = :memberId";
-//
-//            Member findMember = em.createQuery(query, Member.class)
-//                    .setParameter("memberId", member1.getId())
-//                    .getSingleResult();
-//
-//            System.out.println("findMember = " + findMember);
-
-            /**
-             * 엔티티 직접 사용 - 외래 키 값
-             */
-            String query = "select m from Member m where m.team = :team";
-
-            List<Member> members = em.createQuery(query, Member.class)
-                    .setParameter("team", teamA)
+            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
+                    .setParameter("username", member1.getUsername())
                     .getResultList();
 
-            for (Member member : members) {
+            for (Member member : resultList) {
                 System.out.println("member = " + member);
             }
 
