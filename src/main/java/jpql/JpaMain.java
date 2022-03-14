@@ -14,72 +14,102 @@ public class JpaMain {
         tx.begin();
 
         /**
-         * 경로 표현식
+         * 페치 조인 1 - 기본
          */
         try {
-            Team team = new Team();
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("팀A");
+            em.persist(teamA);
+
+            Team teamB = new Team();
+            teamB.setName("팀B");
+            em.persist(teamB);
 
             Member member1 = new Member();
-            member1.setUsername("관리자1");
-            member1.setTeam(team);
+            member1.setUsername("회원1");
+            member1.setTeam(teamA);
             em.persist(member1);
 
             Member member2 = new Member();
-            member2.setUsername("관리자2");
-            member2.setTeam(team);
+            member2.setUsername("회원2");
+            member2.setTeam(teamA);
             em.persist(member2);
+
+            Member member3 = new Member();
+            member3.setUsername("회원3");
+            member3.setTeam(teamB);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
             /**
-             * 상태 필드
+             * 엔티티 페치 조인
              */
-//            String query = "select m.username from Member m";
-//            List<String> result = em.createQuery(query, String.class)
+//            String query = "select m from Member m join fetch m.team";
+//
+//            List<Member> result = em.createQuery(query, Member.class)
 //                    .getResultList();
 //
-//            for (String s : result) {
-//                System.out.println("s = " + s);
+//            for (Member member : result) {
+//                System.out.println("member = " + member.getUsername() + ", " + member.getTeam().getName());
+//                // 회원1, 팀A(SQL)
+//                // 회원2, 팀A(1차캐시)
+//                // 회원3, 팀B(SQL)
+//
+//                // 회원 100명 -> N + 1
 //            }
 
             /**
-             * 단일 값 연관 경로
-             * m.team.name = 상태 필드
+             * 컬렉션 페치 조인
              */
-//            String query = "select m.team.name from Member m";
-//            List<String> result = em.createQuery(query, String.class)
-//                    .getResultList();
+//            String query = "select t from Team t join fetch t.members";
 //
-//            for (String s : result) {
-//                System.out.println("s = " + s);
-//            }
-
-            /**
-             * 단일 값 연관 경로
-             * 묵시적 내부 조인 발생
-             * 조심해서 사용해야함(실무에서)
-             */
-//            String query = "select m.team from Member m";
 //            List<Team> result = em.createQuery(query, Team.class)
 //                    .getResultList();
 //
-//            for (Team s : result) {
-//                System.out.println("s = " + s);
+//            for (Team team : result) {
+//                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
+//                for (Member member : team.getMembers()) {
+//                    System.out.println("-> member = " + member);
+//                }
 //            }
 
             /**
-             * 컬렉션 값 연관 경로
-             * 탐색 안됨
-             * 명시적 조인을 하여 별칭을 만들고 그 별칭으로 탐색
-             * 묵시적 조인을 사용하지 말고 명시적 조인으로만 사용(부작용 방지)
+             * 페치 조인과 DISTINCT
              */
-            String query = "select m.username from Team t join  t.members m";
-            List<String> result = em.createQuery(query, String.class)
+//            String query = "select distinct t from Team t join fetch t.members";
+//
+//            List<Team> result = em.createQuery(query, Team.class)
+//                    .getResultList();
+//
+//            System.out.println("result = " + result.size());
+//
+//            for (Team team : result) {
+//                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
+//                for (Member member : team.getMembers()) {
+//                    System.out.println("-> member = " + member);
+//                }
+//            }
+
+            /**
+             * 페치 조인과 일반 조인의 차이
+             * 페치 조인 = 즉시 로딩
+             * sql로 한번에 조회
+             */
+            String query = "select t from Team t join fetch t.members";
+
+            List<Team> result = em.createQuery(query, Team.class)
                     .getResultList();
 
-            System.out.println("result = " + result);
+            System.out.println("result = " + result.size());
+
+            for (Team team : result) {
+                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
+                for (Member member : team.getMembers()) {
+                    System.out.println("-> member = " + member);
+                }
+            }
 
             tx.commit();
         } catch (Exception e) {
