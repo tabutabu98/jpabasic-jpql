@@ -14,7 +14,7 @@ public class JpaMain {
         tx.begin();
 
         /**
-         * 페치 조인 1 - 기본
+         * 페치 조인 2 - 한계
          */
         try {
             Team teamA = new Team();
@@ -44,43 +44,15 @@ public class JpaMain {
             em.clear();
 
             /**
-             * 엔티티 페치 조인
-             */
-//            String query = "select m from Member m join fetch m.team";
-//
-//            List<Member> result = em.createQuery(query, Member.class)
-//                    .getResultList();
-//
-//            for (Member member : result) {
-//                System.out.println("member = " + member.getUsername() + ", " + member.getTeam().getName());
-//                // 회원1, 팀A(SQL)
-//                // 회원2, 팀A(1차캐시)
-//                // 회원3, 팀B(SQL)
-//
-//                // 회원 100명 -> N + 1
-//            }
-
-            /**
-             * 컬렉션 페치 조인
+             * 페치 조인의 특징과 한계
+             * 페치 조인 대상에는 별칭을 주면 안됨(정합성 이슈로 인하여)
+             * 둘 이상의 컬렉션은 페치 조인 할 수 없다.
              */
 //            String query = "select t from Team t join fetch t.members";
 //
 //            List<Team> result = em.createQuery(query, Team.class)
-//                    .getResultList();
-//
-//            for (Team team : result) {
-//                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
-//                for (Member member : team.getMembers()) {
-//                    System.out.println("-> member = " + member);
-//                }
-//            }
-
-            /**
-             * 페치 조인과 DISTINCT
-             */
-//            String query = "select distinct t from Team t join fetch t.members";
-//
-//            List<Team> result = em.createQuery(query, Team.class)
+//                    .setFirstResult(0)
+//                    .setMaxResults(1)
 //                    .getResultList();
 //
 //            System.out.println("result = " + result.size());
@@ -93,13 +65,14 @@ public class JpaMain {
 //            }
 
             /**
-             * 페치 조인과 일반 조인의 차이
-             * 페치 조인 = 즉시 로딩
-             * sql로 한번에 조회
+             * 페치 조인의 특징과 한계
+             * members에 BatchSize(100) 혹은 글로벌로 배치 사이즈를 지정
              */
-            String query = "select t from Team t join fetch t.members";
+            String query = "select t from Team t";
 
             List<Team> result = em.createQuery(query, Team.class)
+                    .setFirstResult(0)
+                    .setMaxResults(2)
                     .getResultList();
 
             System.out.println("result = " + result.size());
