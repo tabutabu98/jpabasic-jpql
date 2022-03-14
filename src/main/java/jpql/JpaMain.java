@@ -13,8 +13,7 @@ public class JpaMain {
         tx.begin();
 
         /**
-         * Named 쿼리
-         * 애플리케이션 로딩 시점에 쿼리를 검증(중요)
+         * 벌크 연산
          */
         try {
             Team teamA = new Team();
@@ -40,19 +39,27 @@ public class JpaMain {
             member3.setTeam(teamB);
             em.persist(member3);
 
-            em.flush();
-            em.clear();
+//            em.flush();
+//            em.clear();
 
             /**
-             * Named 쿼리 - 어노테이션
+             * 모든 회원의 나이를 20살로 변경
+             * 벌크 연산은 flush를 자동 호출한다.
              */
-            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
-                    .setParameter("username", member1.getUsername())
-                    .getResultList();
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
 
-            for (Member member : resultList) {
-                System.out.println("member = " + member);
-            }
+            em.clear();
+
+            Member findMember = em.find(Member.class, member1.getId());
+            System.out.println("findMember = " + findMember.getAge());
+
+            System.out.println("resultCount = " + resultCount);
+
+            // 영속성 컨텍스트에는 벌크 연산의 쿼리가 반영이 안되어 있음
+//            System.out.println("member1.getAge() = " + member1.getAge());
+//            System.out.println("member2.getAge() = " + member2.getAge());
+//            System.out.println("member3.getAge() = " + member3.getAge());
 
             tx.commit();
         } catch (Exception e) {
